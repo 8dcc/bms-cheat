@@ -30,7 +30,7 @@ if [ "$1" == "unload" ]; then
 fi
 
 if grep -q "$libpath" "/proc/$pid/maps"; then
-    echo -e "hl-cheat already loaded. Reloading...\n";
+    echo -e "bms-cheat already loaded. Reloading...\n";
 
     # 0x2 -> RTLD_NOW
     # 0x6 -> RTLD_LAZY | RTLD_NOLOAD
