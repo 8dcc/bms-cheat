@@ -1,9 +1,10 @@
 
-/* NOTE: For more comments, see 8dcc/hl-cheat */
-
 #include <stdbool.h>
 #include <stdio.h>
 #include <dlfcn.h>
+
+#include "include/main.h"
+#include "include/globals.h"
 
 static bool loaded = false;
 
@@ -11,11 +12,16 @@ __attribute__((constructor)) /* Entry point when injected */
 void load(void) {
     printf("bms-cheat injected!\n");
 
+    if (!globals_init()) {
+        fprintf(stderr, "load: error loading globals, aborting\n");
+        self_unload();
+    }
+
     loaded = true;
 }
 
 __attribute__((destructor)) /* Entry point when unloaded */
-void unload() {
+void unload(void) {
     if (!loaded)
         return;
 
