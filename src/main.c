@@ -1,32 +1,35 @@
 
+/* NOTE: For more comments, see 8dcc/hl-cheat */
+
+#include <stdbool.h>
 #include <stdio.h>
+#include <dlfcn.h>
 
-/**
- * @brief The PI number
- */
-#define PI 3.141592
+static bool loaded = false;
 
-/**
- * Simple function for adding 2 integers.
- *
- * @todo Rename function
- * @brief Sum a + b
- * @param a, b The numbers to sum
- * @return Sum of a + b
- */
-int test_func(int a, int b) {
-    return a + b;
+__attribute__((constructor)) /* Entry point when injected */
+void load(void) {
+    printf("bms-cheat injected!\n");
+
+    loaded = true;
 }
 
-/**
- * @todo Argument handling
- * @brief Entry point of the program
- * @param argc Number of arguments
- * @param argv Vector of string arguments
- * @return Exit code
- */
-int main(int argc, char** argv) {
-    printf("Hello, world!\n");
-    return 0;
+__attribute__((destructor)) /* Entry point when unloaded */
+void unload() {
+    if (!loaded)
+        return;
+
+    /* TODO: Unhook stuff */
+
+    printf("bms-cheat unloaded.\n\n");
 }
 
+void self_unload(void) {
+    void* self = dlopen("libbmscheat.so", RTLD_LAZY | RTLD_NOLOAD);
+
+    /* Close the call we just made to dlopen() */
+    dlclose(self);
+
+    /* Close the call our injector made */
+    dlclose(self);
+}
