@@ -1,29 +1,30 @@
 
+# For commented version, see: https://github.com/8dcc/hl-cheat/blob/main/Makefile
+
 CC=gcc
-CFLAGS=-Wall -Wextra
+CFLAGS=-Wall -Wextra -m32 -fPIC
 LDFLAGS=
 
-# TODO: Add object files and rename
 OBJS=obj/main.c.o
-BIN=output.out
+BIN=libbmscheat.so
 
-.PHONY: clean all run
+.PHONY: clean all inject
 
 # -------------------------------------------
 
 all: $(BIN)
 
-run: $(BIN)
-	./$<
-
 clean:
 	rm -f $(OBJS)
 	rm -f $(BIN)
 
+inject: $(BIN)
+	bash ./inject.sh
+
 # -------------------------------------------
 
 $(BIN): $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $(OBJS) $(LDFLAGS)
+	$(CC) $(CFLAGS) -shared -o $@ $(OBJS) $(LDFLAGS)
 
 $(OBJS): obj/%.c.o : src/%.c
 	@mkdir -p obj/
