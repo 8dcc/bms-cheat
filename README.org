@@ -1,35 +1,29 @@
-#+title: Title
+#+title: BMS Cheat
 #+options: toc:nil
 #+startup: showeverything
-#+export_file_name: ./doc/README.md
 #+author: 8dcc
 
-#+begin_comment
-*TODO*: Change project-name and title
-*TODO*: Change project name for Doxygen
-*TODO*: Change output.out in Makefile
-*TODO*: Export README.org to markdown for Doxygen
-#+end_comment
-
-*Short description.*
+*Linux cheat for Black Mesa made in C.*
 
 #+TOC: headlines 2
-
-* Description
-Long description.
 
 * Building
 
 #+begin_src console
-$ git clone https://github.com/8dcc/project-name
-$ cd project-name
+$ git clone https://github.com/8dcc/bms-cheat
+$ cd bms-cheat
 $ make
 ...
 #+end_src
 
-* Usage
+* Injecting
+Uses the [[https://www.gnu.org/savannah-checkouts/gnu/gdb/index.html][gdb]] debugger for injecting the library.
 
 #+begin_src console
-$ ./project-name.out --help
+$ ./injector.sh
+[sudo] password for username:
+
 ...
+
+bms-cheat loaded!
 #+end_src
