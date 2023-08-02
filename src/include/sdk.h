@@ -47,7 +47,7 @@ typedef struct {
 typedef struct {
     PAD(4 * 22);
     bool (*CreateMove)(float flInputSampleTime, usercmd_t* cmd);
-    PAD(4 * 31);
-} ClientMode;
+    PAD(4 * 34);
+} ClientModeBms;
 
 #endif /* SDK_H_ */
