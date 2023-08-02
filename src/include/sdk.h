@@ -11,9 +11,43 @@
 /*----------------------------------------------------------------------------*/
 
 typedef struct {
+    float x, y, z;
+} vec3_t;
+
+/* TODO: Buttons enum */
+
+typedef struct {
+    int command_number;
+    int tick_count;
+    vec3_t viewangles;
+    float forwardmove;
+    float sidemove;
+    float upmove;
+    int buttons;
+    uint8_t impulse;
+    int weaponselect;
+    int weaponsubtype;
+    int random_seed;
+
+    /* TODO: Check if there */
+    int server_random_seed;    // Only the server populates this seed
+
+    short mousedx;
+    short mousedy;
+
+    bool hasbeenpredicted;
+} usercmd_t;
+
+typedef struct {
     PAD(4 * 12);
     void (*HudProcessInput)(bool bActive);
     PAD(4 * 68);
 } BaseClient;
+
+typedef struct {
+    PAD(4 * 22);
+    bool (*CreateMove)(float flInputSampleTime, usercmd_t* cmd);
+    PAD(4 * 31);
+} ClientMode;
 
 #endif /* SDK_H_ */
