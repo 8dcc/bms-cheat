@@ -51,3 +51,9 @@ bool globals_init(void) {
 
     return true;
 }
+
+bool resore_vtables(void) {
+    RESTORE_VTABLE(ClientModeBms, i_clientmodebms);
+
+    return true;
+}
