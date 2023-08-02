@@ -38,16 +38,28 @@ typedef struct {
     bool hasbeenpredicted;
 } usercmd_t;
 
+typedef struct BaseClient BaseClient;
+typedef struct ClientModeBms ClientModeBms;
+
 typedef struct {
     PAD(4 * 12);
-    void (*HudProcessInput)(bool bActive);
+    void (*HudProcessInput)(BaseClient* thisptr, bool bActive);
     PAD(4 * 68);
-} BaseClient;
+} VT_BaseClient;
+
+struct BaseClient {
+    VT_BaseClient* vt;
+};
 
 typedef struct {
     PAD(4 * 22);
-    bool (*CreateMove)(float flInputSampleTime, usercmd_t* cmd);
+    bool (*CreateMove)(ClientModeBms* thisptr, float flInputSampleTime,
+                       usercmd_t* cmd);
     PAD(4 * 34);
-} ClientModeBms;
+} VT_ClientModeBms;
+
+struct ClientModeBms {
+    VT_ClientModeBms* vt;
+};
 
 #endif /* SDK_H_ */
