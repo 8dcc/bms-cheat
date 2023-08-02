@@ -7,9 +7,22 @@
 #include "include/util.h"
 
 void* h_client;
-BaseClient* i_baseclient;
+DECL_INTF(BaseClient, baseclient);
+DECL_INTF(ClientModeBms, clientmodebms);
 
 /*----------------------------------------------------------------------------*/
+
+static inline ClientModeBms* get_clientmodebms(void) {
+    /* Offset in bytes inside the HudProcessInput function to g_pClientMode */
+    const int byte_offset = 1;
+
+    void* func_ptr      = i_baseclient->HudProcessInput;
+    void* g_pClientMode = *(void**)(func_ptr + byte_offset); /* E0 08 BB 00 */
+    void* edx           = *(void**)g_pClientMode;
+    void* clientmode    = *(void**)edx;
+
+    return (ClientModeBms*)clientmode;
+}
 
 bool globals_init(void) {
     /* Handlers */
@@ -23,12 +36,16 @@ bool globals_init(void) {
     i_baseclient = *(BaseClient**)get_interface(h_client, "VClient018");
 
     if (!i_baseclient) {
-        fprintf(stderr, "globals_init: couldn't load some symbols\n");
+        fprintf(stderr, "globals_init: couldn't load i_baseclient\n");
         return false;
     }
 
-    printf("HudProcessInput: ");
-    PRINT_BYTES(i_baseclient->HudProcessInput, 32);
+    i_clientmodebms = get_clientmodebms();
+
+    if (!i_clientmodebms) {
+        fprintf(stderr, "globals_init: couldn't load i_clientmodebms\n");
+        return false;
+    }
 
     return true;
 }

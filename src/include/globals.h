@@ -23,7 +23,9 @@
 /* Global variables */
 
 extern void* h_client;
-extern BaseClient* i_baseclient;
+
+DECL_INTF_EXTERN(BaseClient, baseclient);
+DECL_INTF_EXTERN(ClientModeBms, clientmodebms);
 
 /*----------------------------------------------------------------------------*/
 /* Functions from globals.c */
