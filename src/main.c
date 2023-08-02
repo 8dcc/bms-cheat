@@ -31,7 +31,10 @@ void unload(void) {
     if (!loaded)
         return;
 
-    /* TODO: Unhook stuff */
+    if (!resore_vtables()) {
+        fprintf(stderr, "unload: error restoring vtables, aborting\n");
+        self_unload();
+    }
 
     printf("bms-cheat unloaded.\n\n");
 }
