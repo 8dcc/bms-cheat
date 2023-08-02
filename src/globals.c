@@ -14,7 +14,8 @@ DECL_INTF(ClientModeBms, clientmodebms);
 /*----------------------------------------------------------------------------*/
 
 static inline ClientModeBms* get_clientmodebms(void) {
-    /* Offset in bytes inside the HudProcessInput function to g_pClientMode */
+    /* Offset in bytes inside the HudProcessInput function to g_pClientMode.
+     * For more info, see: https://github.com/8dcc/bms-cheat/wiki */
     const int byte_offset = 1;
 
     void* func_ptr      = i_baseclient->vt->HudProcessInput;
@@ -44,6 +45,9 @@ bool globals_init(void) {
         fprintf(stderr, "globals_init: couldn't load i_clientmodebms\n");
         return false;
     }
+
+    /* https://github.com/8dcc/bms-cheat/wiki */
+    CLONE_VTABLE(ClientModeBms, i_clientmodebms);
 
     return true;
 }
