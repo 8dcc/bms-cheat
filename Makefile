@@ -5,7 +5,7 @@ CC=gcc
 CFLAGS=-Wall -Wextra -m32 -fPIC
 LDFLAGS=
 
-OBJS=obj/main.c.o obj/globals.c.o obj/util.c.o
+OBJS=obj/main.c.o obj/globals.c.o obj/hooks.c.o obj/util.c.o
 BIN=libbmscheat.so
 
 .PHONY: clean all inject
