@@ -8,21 +8,20 @@
 
 void* h_client;
 
-/* The interfaces will be the vtable pointers of the classes */
-DECL_INTF(VT_BaseClient, baseclient);
-DECL_INTF(VT_ClientModeBms, clientmodebms);
+DECL_INTF(BaseClient, baseclient);
+DECL_INTF(ClientModeBms, clientmodebms);
 
 /*----------------------------------------------------------------------------*/
 
-static inline VT_ClientModeBms* get_clientmodebms(void) {
+static inline ClientModeBms* get_clientmodebms(void) {
     /* Offset in bytes inside the HudProcessInput function to g_pClientMode */
     const int byte_offset = 1;
 
-    void* func_ptr      = i_baseclient->HudProcessInput;
+    void* func_ptr      = i_baseclient->vt->HudProcessInput;
     void* g_pClientMode = *(void**)(func_ptr + byte_offset); /* E0 08 BB 00 */
     ClientModeBms* edx  = *(ClientModeBms**)g_pClientMode;
 
-    return edx->vt;
+    return edx;
 }
 
 bool globals_init(void) {
@@ -34,14 +33,14 @@ bool globals_init(void) {
     }
 
     /* Interfaces */
-    i_baseclient = ((BaseClient*)get_interface(h_client, "VClient018"))->vt;
-    if (!i_baseclient) {
+    i_baseclient = (BaseClient*)get_interface(h_client, "VClient018");
+    if (!i_baseclient || !i_baseclient->vt) {
         fprintf(stderr, "globals_init: couldn't load i_baseclient\n");
         return false;
     }
 
     i_clientmodebms = get_clientmodebms();
-    if (!i_clientmodebms) {
+    if (!i_clientmodebms || !i_clientmodebms->vt) {
         fprintf(stderr, "globals_init: couldn't load i_clientmodebms\n");
         return false;
     }
