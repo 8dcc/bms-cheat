@@ -24,8 +24,8 @@
 
 extern void* h_client;
 
-DECL_INTF_EXTERN(BaseClient, baseclient);
-DECL_INTF_EXTERN(ClientModeBms, clientmodebms);
+DECL_INTF_EXTERN(VT_BaseClient, baseclient);
+DECL_INTF_EXTERN(VT_ClientModeBms, clientmodebms);
 
 /*----------------------------------------------------------------------------*/
 /* Functions from globals.c */
