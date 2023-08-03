@@ -49,8 +49,11 @@
 /* Global variables */
 
 extern void* h_client;
+extern void* h_engine;
 
 DECL_INTF_EXTERN(BaseClient, baseclient);
+DECL_INTF_EXTERN(EngineClient, engine);
+DECL_INTF_EXTERN(EntityList, entitylist);
 DECL_INTF_EXTERN(ClientModeBms, clientmodebms);
 
 /*----------------------------------------------------------------------------*/
