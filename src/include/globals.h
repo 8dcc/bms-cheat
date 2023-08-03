@@ -14,10 +14,10 @@
  * oVTi_* | original vtable pointer (will be replaced with our own vtable)
  * nVTi_* | new vtable pointer allocated by us
  */
-#define DECL_INTF(type, name) \
-    type* i_##name = NULL;    \
-    VT_##type* oVTi_##name;   \
-    VT_##type* nVTi_##name;
+#define DECL_INTF(type, name)      \
+    type* i_##name         = NULL; \
+    VT_##type* oVTi_##name = NULL; \
+    VT_##type* nVTi_##name = NULL;
 
 #define DECL_INTF_EXTERN(type, name) \
     extern type* i_##name;           \
