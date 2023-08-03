@@ -18,7 +18,18 @@ bool h_CreateMove(ClientModeBms* thisptr, float flInputSampleTime,
                   usercmd_t* cmd) {
     bool ret = ORIGINAL(CreateMove, thisptr, flInputSampleTime, cmd);
 
-    printf("Hello from CreateMove!\n");
+    int local_idx       = i_engine->vt->GetLocalPlayer(i_engine);
+    Entity* localplayer = i_entitylist->vt->GetEntity(i_entitylist, local_idx);
+
+    /* printf("localplayer: %p |", localplayer); */
+
+    if (localplayer) {
+        float ox = localplayer->origin.x;
+        float oy = localplayer->origin.y;
+        float oz = localplayer->origin.z;
+        printf("health: %3d | team: %d | origin:  %f, %f, %f\n",
+               localplayer->health, localplayer->team_num, ox, oy, oz);
+    }
 
     return ret;
 }
