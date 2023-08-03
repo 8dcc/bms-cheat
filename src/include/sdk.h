@@ -9,6 +9,7 @@
 #define PAD(n)    uint8_t PADSTR(__LINE__)[n]
 
 /*----------------------------------------------------------------------------*/
+/* Data structures and enums */
 
 typedef struct {
     float x, y, z;
@@ -61,7 +62,34 @@ typedef struct {
     bool hasbeenpredicted;
 } usercmd_t;
 
+/*----------------------------------------------------------------------------*/
+/* Other classes */
+
+typedef struct Entity Entity;
+
+/* TODO: Angles */
+/* TODO: Absolute origin if possible */
+struct Entity {
+    PAD(0x88);
+    int health; /* 0x88 */
+    PAD(0x8);
+    int team_num; /* 0x90 */
+    PAD(0x294);
+    vec3_t origin; /* 0x32C */
+
+#if 0
+    /* FIXME */
+    PAD(0x14);
+    int flags; /* 0x344 */
+#endif
+};
+
+/*----------------------------------------------------------------------------*/
+/* Interfaces */
+
 typedef struct BaseClient BaseClient;
+typedef struct EntityList EntityList;
+typedef struct EngineClient EngineClient;
 typedef struct ClientModeBms ClientModeBms;
 
 typedef struct {
@@ -72,6 +100,25 @@ typedef struct {
 
 struct BaseClient {
     VT_BaseClient* vt;
+};
+
+typedef struct {
+    PAD(4 * 12);
+    int (*GetLocalPlayer)(EngineClient* thisptr);
+} VT_EngineClient;
+
+struct EngineClient {
+    VT_EngineClient* vt;
+};
+
+typedef struct {
+    PAD(4 * 3);
+    Entity* (*GetEntity)(EntityList* thisptr, int id);
+    PAD(4 * 5);
+} VT_EntityList;
+
+struct EntityList {
+    VT_EntityList* vt;
 };
 
 typedef struct {
