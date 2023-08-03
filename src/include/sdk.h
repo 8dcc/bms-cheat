@@ -67,7 +67,7 @@ typedef struct ClientModeBms ClientModeBms;
 typedef struct {
     PAD(4 * 12);
     void (*HudProcessInput)(BaseClient* thisptr, bool bActive);
-    PAD(4 * 68);
+    PAD(4 * 69);
 } VT_BaseClient;
 
 struct BaseClient {
