@@ -5,6 +5,7 @@
 #include "include/globals.h"
 #include "include/sdk.h"
 #include "include/util.h"
+#include "features/features.h"
 
 DECL_HOOK(CreateMove);
 
@@ -47,6 +48,8 @@ bool h_CreateMove(ClientModeBms* thisptr, float flInputSampleTime,
         return ret;
 
     print_ent_info(localplayer);
+
+    bhop(cmd);
 
     return ret;
 }
