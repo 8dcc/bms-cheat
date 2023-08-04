@@ -79,6 +79,7 @@ enum entity_flags {
 };
 
 typedef struct {
+    void* vt;
     int command_number;
     int tick_count;
     vec3_t viewangles;
@@ -90,7 +91,6 @@ typedef struct {
     int weaponselect;
     int weaponsubtype;
     int random_seed;
-    int server_random_seed;
     short mousedx;
     short mousedy;
     bool hasbeenpredicted;
