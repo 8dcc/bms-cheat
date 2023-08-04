@@ -137,7 +137,9 @@ struct Entity {
     int health; /* 0x88 */
     PAD(0x4);
     int team_num; /* 0x90 */
-    PAD(0x298);
+    PAD(0x54);
+    vec3_t velocity; /* 0xE8 */
+    PAD(0x238);
     vec3_t origin; /* 0x32C */
     PAD(0xA);
     int flags; /* 0x344 */
@@ -164,6 +166,9 @@ struct BaseClient {
 typedef struct {
     PAD(4 * 12);
     int (*GetLocalPlayer)(EngineClient* thisptr);
+    PAD(4 * 6);
+    void (*GetViewAngles)(EngineClient* thisptr, vec3_t* v);
+    void (*SetViewAngles)(EngineClient* thisptr, vec3_t* v);
 } VT_EngineClient;
 
 struct EngineClient {
