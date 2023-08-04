@@ -12,6 +12,8 @@
 void* h_client = NULL;
 void* h_engine = NULL;
 
+Entity* localplayer = NULL;
+
 DECL_INTF(BaseClient, baseclient);
 DECL_INTF(EntityList, entitylist);
 DECL_INTF(EngineClient, engine);

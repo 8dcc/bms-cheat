@@ -41,8 +41,10 @@ bool h_CreateMove(ClientModeBms* thisptr, float flInputSampleTime,
                   usercmd_t* cmd) {
     bool ret = ORIGINAL(CreateMove, thisptr, flInputSampleTime, cmd);
 
-    int local_idx       = i_engine->vt->GetLocalPlayer(i_engine);
-    Entity* localplayer = i_entitylist->vt->GetEntity(i_entitylist, local_idx);
+    localplayer =
+      METHOD_ARGS(i_entitylist, GetEntity, METHOD(i_engine, GetLocalPlayer));
+    if (!localplayer)
+        return ret;
 
     print_ent_info(localplayer);
 
