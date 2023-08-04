@@ -44,6 +44,40 @@ enum in_buttons {
     IN_ATTACK3   = (1 << 25),
 };
 
+enum entity_flags {
+    FL_ONGROUND              = (1 << 0),
+    FL_DUCKING               = (1 << 1),
+    FL_WATERJUMP             = (1 << 2),
+    FL_ONTRAIN               = (1 << 3),
+    FL_INRAIN                = (1 << 4),
+    FL_FROZEN                = (1 << 5),
+    FL_ATCONTROLS            = (1 << 6),
+    FL_CLIENT                = (1 << 7),
+    FL_FAKECLIENT            = (1 << 8),
+    FL_INWATER               = (1 << 9),
+    FL_FLY                   = (1 << 10),
+    FL_SWIM                  = (1 << 11),
+    FL_CONVEYOR              = (1 << 12),
+    FL_NPC                   = (1 << 13),
+    FL_GODMODE               = (1 << 14),
+    FL_NOTARGET              = (1 << 15),
+    FL_AIMTARGET             = (1 << 16),
+    FL_PARTIALGROUND         = (1 << 17),
+    FL_STATICPROP            = (1 << 18),
+    FL_GRAPHED               = (1 << 19),
+    FL_GRENADE               = (1 << 20),
+    FL_STEPMOVEMENT          = (1 << 21),
+    FL_DONTTOUCH             = (1 << 22),
+    FL_BASEVELOCITY          = (1 << 23),
+    FL_WORLDBRUSH            = (1 << 24),
+    FL_OBJECT                = (1 << 25),
+    FL_KILLME                = (1 << 26),
+    FL_ONFIRE                = (1 << 27),
+    FL_DISSOLVING            = (1 << 28),
+    FL_TRANSRAGDOLL          = (1 << 29),
+    FL_UNBLOCKABLE_BY_PLAYER = (1 << 30)
+};
+
 typedef struct {
     int command_number;
     int tick_count;
@@ -65,23 +99,43 @@ typedef struct {
 /*----------------------------------------------------------------------------*/
 /* Other classes */
 
+#define METHOD(instance, method) instance->vt->method(instance)
+
 typedef struct Entity Entity;
 
 /* TODO: Angles */
-/* TODO: Absolute origin if possible */
-struct Entity {
-    PAD(0x88);
-    int health; /* 0x88 */
-    PAD(0x8);
-    int team_num; /* 0x90 */
-    PAD(0x294);
-    vec3_t origin; /* 0x32C */
+typedef struct {
+    PAD(4 * 11);
+    vec3_t* (*GetAbsOrigin)(Entity* thisptr); /* 11 */
+    vec3_t* (*GetAbsAngles)(Entity* thisptr); /* 12, kinda broken */
+    PAD(4 * 71);
+    int (*GetIndex)(Entity* thisptr); /* 84 */
+    PAD(4 * 36);
+    int (*GetTeamNumber)(Entity* thisptr); /* 121 */
+    PAD(4 * 38);
+    int (*GetHealth)(Entity* thisptr); /* 160 */
+    PAD(4 * 36);
+    bool (*IsAlive)(Entity* thisptr); /* 197 */
+    PAD(4 * 1);
+    bool (*IsPlayer)(Entity* thisptr); /* 199 */
 
-#if 0
-    /* FIXME */
-    PAD(0x14);
+    /* REVIEW */
+    PAD(4 * 3);
+    bool (*IsNPC)(Entity* thisptr); /* 203 */
+    PAD(4 * 3);
+    bool (*IsWeapon)(Entity* thisptr); /* 203 */
+} VT_Entity;
+
+struct Entity {
+    VT_Entity* vt;
+    PAD(0x84);
+    int health; /* 0x88 */
+    PAD(0x4);
+    int team_num; /* 0x90 */
+    PAD(0x298);
+    vec3_t origin; /* 0x32C */
+    PAD(0xA);
     int flags; /* 0x344 */
-#endif
 };
 
 /*----------------------------------------------------------------------------*/
