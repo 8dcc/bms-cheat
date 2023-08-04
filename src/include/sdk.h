@@ -123,7 +123,7 @@ typedef struct {
     PAD(4 * 3);
     bool (*IsNPC)(Entity* thisptr); /* 203 */
     PAD(4 * 3);
-    bool (*IsWeapon)(Entity* thisptr); /* 203 */
+    bool (*IsWeapon)(Entity* thisptr); /* 207 */
 } VT_Entity;
 
 struct Entity {
