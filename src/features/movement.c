@@ -5,7 +5,9 @@
 #include "../include/util.h"
 #include "../include/sdk.h"
 
-static void autostrafe_legit(usercmd_t* cmd) {
+#define LEGIT_AUTOSTRAFE
+
+void autostrafe_legit(usercmd_t* cmd) {
     /* Check mouse x delta */
     if (cmd->mousedx < 0)
         cmd->sidemove = -450.0f;
@@ -18,7 +20,7 @@ static void autostrafe_legit(usercmd_t* cmd) {
  *   https://github.com/deboogerxyz/ahc/blob/0492646e28dd7234a8cd431d37b152dc18a21b04/ahc.c#L201
  *   https://github.com/NullHooks/NullHooks/blob/535351569ca599cadd21a286d88098b6dc057a46/src/core/features/movement/bhop.cpp#L73
  */
-static void autostrafe_rage(usercmd_t* cmd) {
+void autostrafe_rage(usercmd_t* cmd) {
     /* TODO: Get at runtime */
     const float sv_airaccelerate = 10.0f;
     const float sv_maxspeed      = 320.0f;
@@ -56,6 +58,8 @@ static void autostrafe_rage(usercmd_t* cmd) {
     cmd->sidemove    = -sinf(movedir) * cl_sidespeed;
 }
 
+/* TODO: Bhop and autostrafe menu/settings
+ * TODO: Make autostrafe functions static after menu */
 void bhop(usercmd_t* cmd) {
     if (!localplayer || !METHOD(localplayer, IsAlive))
         return;
@@ -65,6 +69,13 @@ void bhop(usercmd_t* cmd) {
     if (!(localplayer->flags & FL_ONGROUND))
         cmd->buttons &= ~IN_JUMP;
 
+#if defined(LEGIT_AUTOSTRAFE)
     if (is_jumping)
         autostrafe_rage(cmd);
+#elif defined(RAGE_AUTOSTRAFE)
+    if (is_jumping)
+        autostrafe_legit(cmd);
+#else
+    (void)is_jumping;
+#endif
 }
