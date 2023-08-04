@@ -100,6 +100,8 @@ typedef struct {
 /* Other classes */
 
 #define METHOD(instance, method) instance->vt->method(instance)
+#define METHOD_ARGS(instance, method, ...) \
+    instance->vt->method(instance, __VA_ARGS__)
 
 typedef struct Entity Entity;
 
@@ -128,6 +130,9 @@ typedef struct {
 
 struct Entity {
     VT_Entity* vt;
+
+    /* TODO: m_MoveType @ 0x75 */
+
     PAD(0x84);
     int health; /* 0x88 */
     PAD(0x4);
