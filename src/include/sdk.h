@@ -151,6 +151,7 @@ struct Entity {
 typedef struct BaseClient BaseClient;
 typedef struct EngineClient EngineClient;
 typedef struct EntityList EntityList;
+typedef struct EngineVGui EngineVGui;
 typedef struct ClientModeBms ClientModeBms;
 
 typedef struct {
@@ -186,6 +187,15 @@ typedef struct {
 
 struct EntityList {
     VT_EntityList* vt;
+};
+
+typedef struct {
+    PAD(4 * 14);
+    void (*Paint)(EngineVGui* thisptr, int mode);
+} VT_EngineVGui;
+
+struct EngineVGui {
+    VT_EngineVGui* vt;
 };
 
 typedef struct {
