@@ -178,7 +178,10 @@ struct EngineClient {
 typedef struct {
     PAD(4 * 3);
     Entity* (*GetEntity)(EntityList* thisptr, int id);
-    PAD(4 * 5);
+
+    /* REVIEW */
+    PAD(4 * 4);
+    int (*HighestEntityIdx)(EntityList* thisptr);
 } VT_EntityList;
 
 struct EntityList {
