@@ -149,8 +149,8 @@ struct Entity {
 /* Interfaces */
 
 typedef struct BaseClient BaseClient;
-typedef struct EntityList EntityList;
 typedef struct EngineClient EngineClient;
+typedef struct EntityList EntityList;
 typedef struct ClientModeBms ClientModeBms;
 
 typedef struct {
@@ -192,7 +192,6 @@ typedef struct {
     PAD(4 * 22);
     bool (*CreateMove)(ClientModeBms* thisptr, float flInputSampleTime,
                        usercmd_t* cmd);
-    PAD(4 * 34);
 } VT_ClientModeBms;
 
 struct ClientModeBms {

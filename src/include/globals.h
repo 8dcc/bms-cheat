@@ -32,13 +32,13 @@
  */
 #define CLONE_VTABLE(class, name)                                           \
     oVT##name = name->vt;                                                   \
-    nVT##name = malloc(sizeof(VT_##class));                                 \
+    nVT##name = malloc(vmt_size(name->vt));                                 \
     if (!nVT##name) {                                                       \
         fprintf(stderr, "CLONE_VTABLE: Could not allocate vtable for %s\n", \
                 #name);                                                     \
         return false;                                                       \
     }                                                                       \
-    memcpy(nVT##name, name->vt, sizeof(VT_##class));                        \
+    memcpy(nVT##name, name->vt, vmt_size(name->vt));                        \
     name->vt = nVT##name;
 
 #define RESTORE_VTABLE(class, name) \
