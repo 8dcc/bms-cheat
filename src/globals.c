@@ -9,6 +9,22 @@
 #define CLIENT_SO "./bms/bin/client.so"
 #define ENGINE_SO "./bin/engine.so"
 
+#define GET_HANDLER(VAR, STR)                                   \
+    VAR = dlopen(STR, RTLD_LAZY | RTLD_NOLOAD);                 \
+    if (!VAR) {                                                 \
+        fprintf(stderr, "globals_init: can't open " #VAR "\n"); \
+        return false;                                           \
+    }
+
+#define GET_INTERFACE(TYPE, VAR, HANDLER, STR)                   \
+    VAR = (TYPE)get_interface(HANDLER, STR);                     \
+    if (!VAR || !VAR->vt) {                                      \
+        fprintf(stderr, "globals_init: cant't load " #VAR "\n"); \
+        return false;                                            \
+    }
+
+/*----------------------------------------------------------------------------*/
+
 void* h_client = NULL;
 void* h_engine = NULL;
 
@@ -35,44 +51,21 @@ static inline ClientModeBms* get_clientmodebms(void) {
 
 bool globals_init(void) {
     /* Handlers */
-    h_client = dlopen(CLIENT_SO, RTLD_LAZY | RTLD_NOLOAD);
-    if (!h_client) {
-        fprintf(stderr, "globals_init: can't open client.so\n");
-        return false;
-    }
-
-    h_engine = dlopen(ENGINE_SO, RTLD_LAZY | RTLD_NOLOAD);
-    if (!h_client) {
-        fprintf(stderr, "globals_init: can't open engine.so\n");
-        return false;
-    }
+    GET_HANDLER(h_client, CLIENT_SO);
+    GET_HANDLER(h_engine, ENGINE_SO);
 
     /* Interfaces */
-    i_baseclient = (BaseClient*)get_interface(h_client, "VClient018");
-    if (!i_baseclient || !i_baseclient->vt) {
-        fprintf(stderr, "globals_init: couldn't load i_baseclient\n");
-        return false;
-    }
+    GET_INTERFACE(BaseClient*, i_baseclient, h_client, "VClient018");
+    GET_INTERFACE(EngineClient*, i_engine, h_engine, "VEngineClient015");
+    GET_INTERFACE(EntityList*, i_entitylist, h_client, "VClientEntityList003");
 
-    i_engine = (EngineClient*)get_interface(h_engine, "VEngineClient015");
-    if (!i_engine || !i_engine->vt) {
-        fprintf(stderr, "globals_init: couldn't load i_engine\n");
-        return false;
-    }
-
-    i_entitylist = (EntityList*)get_interface(h_client, "VClientEntityList003");
-    if (!i_entitylist || !i_entitylist->vt) {
-        fprintf(stderr, "globals_init: couldn't load i_entitylist\n");
-        return false;
-    }
-
+    /* Other interfaces */
     i_clientmodebms = get_clientmodebms();
     if (!i_clientmodebms || !i_clientmodebms->vt) {
         fprintf(stderr, "globals_init: couldn't load i_clientmodebms\n");
         return false;
     }
 
-    /* https://github.com/8dcc/bms-cheat/wiki */
     CLONE_VTABLE(ClientModeBms, i_clientmodebms);
 
     return true;
