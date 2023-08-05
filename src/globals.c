@@ -33,6 +33,7 @@ Entity* localplayer = NULL;
 DECL_INTF(BaseClient, baseclient);
 DECL_INTF(EntityList, entitylist);
 DECL_INTF(EngineClient, engine);
+DECL_INTF(EngineVGui, enginevgui);
 DECL_INTF(ClientModeBms, clientmodebms);
 
 /*----------------------------------------------------------------------------*/
@@ -58,6 +59,7 @@ bool globals_init(void) {
     GET_INTERFACE(BaseClient*, i_baseclient, h_client, "VClient018");
     GET_INTERFACE(EngineClient*, i_engine, h_engine, "VEngineClient015");
     GET_INTERFACE(EntityList*, i_entitylist, h_client, "VClientEntityList003");
+    GET_INTERFACE(EngineVGui*, i_enginevgui, h_engine, "VEngineVGui001");
 
     /* Other interfaces */
     i_clientmodebms = get_clientmodebms();
@@ -67,12 +69,14 @@ bool globals_init(void) {
     }
 
     CLONE_VTABLE(ClientModeBms, i_clientmodebms);
+    CLONE_VTABLE(EngineVGui, i_enginevgui);
 
     return true;
 }
 
 bool resore_vtables(void) {
     RESTORE_VTABLE(ClientModeBms, i_clientmodebms);
+    RESTORE_VTABLE(EngineVGui, i_enginevgui);
 
     return true;
 }
