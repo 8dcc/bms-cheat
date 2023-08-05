@@ -23,6 +23,7 @@
 /*----------------------------------------------------------------------------*/
 
 void* get_interface(void* handle, const char* name);
+size_t vmt_size(void* vmt);
 vec3_t vec_add(vec3_t a, vec3_t b);
 vec3_t vec_sub(vec3_t a, vec3_t b);
 bool vec_cmp(vec3_t a, vec3_t b);

@@ -24,6 +24,19 @@ void* get_interface(void* handle, const char* name) {
     return CreateInterface(name, NULL);
 }
 
+size_t vmt_size(void* vmt) {
+    /* Pointer to vmt -> Array of function pointers */
+    void** funcs = (void**)vmt;
+
+    int i = 0;
+
+    while (funcs[i])
+        i++;
+
+    /* Return bytes, not number of function pointers */
+    return i * sizeof(void*);
+}
+
 vec3_t vec_add(vec3_t a, vec3_t b) {
     vec3_t ret;
 
