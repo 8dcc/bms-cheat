@@ -1,7 +1,10 @@
 
 #include <stdio.h>
 #include <math.h>
-#include <dlfcn.h>
+#include <dlfcn.h>    /* dlsym */
+#include <unistd.h>   /* getpagesize */
+#include <sys/mman.h> /* mprotect */
+
 #include "include/util.h"
 #include "include/sdk.h"
 
@@ -36,6 +39,8 @@ size_t vmt_size(void* vmt) {
     /* Return bytes, not number of function pointers */
     return i * sizeof(void*);
 }
+
+/*----------------------------------------------------------------------------*/
 
 vec3_t vec_add(vec3_t a, vec3_t b) {
     vec3_t ret;
@@ -81,6 +86,16 @@ void vec_norm(vec3_t v) {
     v.z = 0.0f;
 }
 
+vec3_t vec_to_ang(vec3_t v) {
+    vec3_t ret;
+
+    ret.x = RAD2DEG(atan2(-v.z, hypot(v.x, v.y)));
+    ret.y = RAD2DEG(atan2(v.y, v.x));
+    ret.z = 0.0f;
+
+    return ret;
+}
+
 float angle_delta_rad(float a, float b) {
     float delta = isfinite(a - b) ? remainder(a - b, 360) : 0;
 
@@ -92,12 +107,21 @@ float angle_delta_rad(float a, float b) {
     return delta;
 }
 
-vec3_t vec_to_ang(vec3_t v) {
-    vec3_t ret;
+/*----------------------------------------------------------------------------*/
 
-    ret.x = RAD2DEG(atan2(-v.z, hypot(v.x, v.y)));
-    ret.y = RAD2DEG(atan2(v.y, v.x));
-    ret.z = 0.0f;
+#define PAGE_SIZE          getpagesize()
+#define PAGE_MASK          (~(PAGE_SIZE - 1))
+#define PAGE_ALIGN(x)      ((x + PAGE_SIZE - 1) & PAGE_MASK)
+#define PAGE_ALIGN_DOWN(x) (PAGE_ALIGN(x) - PAGE_SIZE)
 
-    return ret;
+bool protect_addr(void* ptr, int new_flags) {
+    void* p  = (void*)PAGE_ALIGN_DOWN((int)ptr);
+    int pgsz = getpagesize();
+
+    if (mprotect(p, pgsz, new_flags) == -1) {
+        printf("hl-cheat: error protecting %p\n", ptr);
+        return false;
+    }
+
+    return true;
 }
