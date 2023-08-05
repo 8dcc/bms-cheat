@@ -6,8 +6,9 @@
 #include "include/sdk.h"
 #include "include/util.h"
 
-#define CLIENT_SO "./bms/bin/client.so"
-#define ENGINE_SO "./bin/engine.so"
+#define CLIENT_SO     "./bms/bin/client.so"
+#define ENGINE_SO     "./bin/engine.so"
+#define MATSURFACE_SO "./bin/vguimatsurface.so"
 
 #define GET_HANDLER(VAR, STR)                                   \
     VAR = dlopen(STR, RTLD_LAZY | RTLD_NOLOAD);                 \
@@ -25,8 +26,9 @@
 
 /*----------------------------------------------------------------------------*/
 
-void* h_client = NULL;
-void* h_engine = NULL;
+void* h_client     = NULL;
+void* h_engine     = NULL;
+void* h_matsurface = NULL;
 
 Entity* localplayer = NULL;
 
@@ -34,6 +36,7 @@ DECL_INTF(BaseClient, baseclient);
 DECL_INTF(EntityList, entitylist);
 DECL_INTF(EngineClient, engine);
 DECL_INTF(EngineVGui, enginevgui);
+DECL_INTF(MatSurface, surface);
 DECL_INTF(ClientModeBms, clientmodebms);
 
 /*----------------------------------------------------------------------------*/
@@ -54,12 +57,14 @@ bool globals_init(void) {
     /* Handlers */
     GET_HANDLER(h_client, CLIENT_SO);
     GET_HANDLER(h_engine, ENGINE_SO);
+    GET_HANDLER(h_matsurface, MATSURFACE_SO);
 
     /* Interfaces */
     GET_INTERFACE(BaseClient*, i_baseclient, h_client, "VClient018");
     GET_INTERFACE(EngineClient*, i_engine, h_engine, "VEngineClient015");
     GET_INTERFACE(EntityList*, i_entitylist, h_client, "VClientEntityList003");
     GET_INTERFACE(EngineVGui*, i_enginevgui, h_engine, "VEngineVGui001");
+    GET_INTERFACE(MatSurface*, i_surface, h_matsurface, "VGUI_Surface030");
 
     /* Other interfaces */
     i_clientmodebms = get_clientmodebms();

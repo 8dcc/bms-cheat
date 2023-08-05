@@ -50,6 +50,7 @@
 
 extern void* h_client;
 extern void* h_engine;
+extern void* h_matsurface;
 
 extern Entity* localplayer;
 
@@ -57,6 +58,7 @@ DECL_INTF_EXTERN(BaseClient, baseclient);
 DECL_INTF_EXTERN(EngineClient, engine);
 DECL_INTF_EXTERN(EntityList, entitylist);
 DECL_INTF_EXTERN(EngineVGui, enginevgui);
+DECL_INTF_EXTERN(MatSurface, surface);
 DECL_INTF_EXTERN(ClientModeBms, clientmodebms);
 
 /*----------------------------------------------------------------------------*/
