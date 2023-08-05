@@ -105,7 +105,7 @@ typedef struct {
 
 typedef struct Entity Entity;
 
-/* TODO: Angles */
+/* TODO: Movetype */
 typedef struct {
     PAD(4 * 11);
     vec3_t* (*GetAbsOrigin)(Entity* thisptr); /* 11 */
@@ -130,9 +130,6 @@ typedef struct {
 
 struct Entity {
     VT_Entity* vt;
-
-    /* TODO: m_MoveType @ 0x75 */
-
     PAD(0x84);
     int health; /* 0x88 */
     PAD(0x4);
@@ -152,6 +149,7 @@ typedef struct BaseClient BaseClient;
 typedef struct EngineClient EngineClient;
 typedef struct EntityList EntityList;
 typedef struct EngineVGui EngineVGui;
+typedef struct MatSurface MatSurface;
 typedef struct ClientModeBms ClientModeBms;
 
 typedef struct {
@@ -196,6 +194,20 @@ typedef struct {
 
 struct EngineVGui {
     VT_EngineVGui* vt;
+};
+
+typedef struct {
+    PAD(4 * 13);
+    void (*SetColor)(MatSurface*, char r, char g, char b, int a); /* 13 */
+    PAD(4 * 1);
+    void (*DrawFilledRect)(MatSurface*, int x0, int y0, int x1, int y1);
+    PAD(4 * 1);
+    void (*DrawRect)(MatSurface*, int x0, int y0, int x1, int y1); /* 17 */
+    void (*DrawLine)(MatSurface*, int x0, int y0, int x1, int y1); /* 18 */
+} VT_MatSurface;
+
+struct MatSurface {
+    VT_MatSurface* vt;
 };
 
 typedef struct {
