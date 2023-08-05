@@ -8,9 +8,13 @@
 #include "features/features.h"
 
 DECL_HOOK(CreateMove);
+DECL_HOOK(Paint);
+
+/*----------------------------------------------------------------------------*/
 
 bool hooks_init(void) {
     HOOK(i_clientmodebms->vt, CreateMove);
+    HOOK(i_enginevgui->vt, Paint);
 
     return true;
 }
@@ -42,14 +46,20 @@ bool h_CreateMove(ClientModeBms* thisptr, float flInputSampleTime,
                   usercmd_t* cmd) {
     bool ret = ORIGINAL(CreateMove, thisptr, flInputSampleTime, cmd);
 
+    /* Store global Entity* to localplayer */
     localplayer =
       METHOD_ARGS(i_entitylist, GetEntity, METHOD(i_engine, GetLocalPlayer));
     if (!localplayer)
         return ret;
 
     print_ent_info(localplayer);
-
     bhop(cmd);
 
     return ret;
+}
+
+void h_Paint(EngineVGui* thisptr, int mode) {
+    ORIGINAL(Paint, thisptr, mode);
+
+    printf("Hello fom EngineVGui::Paint!\n");
 }

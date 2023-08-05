@@ -25,5 +25,6 @@
 bool hooks_init(void);
 
 DECL_HOOK_EXTERN(bool, CreateMove, ClientModeBms* thisptr, float, usercmd_t*);
+DECL_HOOK_EXTERN(void, Paint, EngineVGui* thisptr, int);
 
 #endif /* HOOKS_H_ */
