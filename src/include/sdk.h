@@ -19,6 +19,10 @@ typedef struct {
     float x, y, z;
 } vec3_t;
 
+typedef struct {
+    float m[4][4];
+} VMatrix;
+
 enum in_buttons {
     IN_ATTACK    = (1 << 0),
     IN_JUMP      = (1 << 1),
@@ -173,6 +177,8 @@ typedef struct {
     PAD(4 * 6);
     void (*GetViewAngles)(EngineClient*, vec3_t* v); /* 19 */
     void (*SetViewAngles)(EngineClient*, vec3_t* v); /* 20 */
+    PAD(4 * 15);
+    VMatrix* (*WorldToScreenMatrix)(EngineClient*); /* 36 */
 } VT_EngineClient;
 
 struct EngineClient {
@@ -192,9 +198,10 @@ struct EntityList {
     VT_EntityList* vt;
 };
 
+/* TODO: GetPanel */
 typedef struct {
     PAD(4 * 14);
-    void (*Paint)(EngineVGui*, int mode); /* 14 */
+    void (*Paint)(EngineVGui*, uint32_t mode); /* 14 */
 } VT_EngineVGui;
 
 struct EngineVGui {
