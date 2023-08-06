@@ -12,6 +12,10 @@
 /* Data structures and enums */
 
 typedef struct {
+    float x, y;
+} vec2_t;
+
+typedef struct {
     float x, y, z;
 } vec3_t;
 
@@ -108,24 +112,24 @@ typedef struct Entity Entity;
 /* TODO: Movetype */
 typedef struct {
     PAD(4 * 11);
-    vec3_t* (*GetAbsOrigin)(Entity* thisptr); /* 11 */
-    vec3_t* (*GetAbsAngles)(Entity* thisptr); /* 12, kinda broken */
+    vec3_t* (*GetAbsOrigin)(Entity*); /* 11 */
+    vec3_t* (*GetAbsAngles)(Entity*); /* 12, kinda broken */
     PAD(4 * 71);
-    int (*GetIndex)(Entity* thisptr); /* 84 */
+    int (*GetIndex)(Entity*); /* 84 */
     PAD(4 * 36);
-    int (*GetTeamNumber)(Entity* thisptr); /* 121 */
+    int (*GetTeamNumber)(Entity*); /* 121 */
     PAD(4 * 38);
-    int (*GetHealth)(Entity* thisptr); /* 160 */
+    int (*GetHealth)(Entity*); /* 160 */
     PAD(4 * 36);
-    bool (*IsAlive)(Entity* thisptr); /* 197 */
+    bool (*IsAlive)(Entity*); /* 197 */
     PAD(4 * 1);
-    bool (*IsPlayer)(Entity* thisptr); /* 199 */
+    bool (*IsPlayer)(Entity*); /* 199 */
 
     /* REVIEW */
     PAD(4 * 3);
-    bool (*IsNPC)(Entity* thisptr); /* 203 */
+    bool (*IsNPC)(Entity*); /* 203 */
     PAD(4 * 3);
-    bool (*IsWeapon)(Entity* thisptr); /* 207 */
+    bool (*IsWeapon)(Entity*); /* 207 */
 } VT_Entity;
 
 struct Entity {
@@ -154,20 +158,20 @@ typedef struct ClientModeBms ClientModeBms;
 
 typedef struct {
     PAD(4 * 12);
-    void (*HudProcessInput)(BaseClient* thisptr, bool bActive);
-    PAD(4 * 69);
+    void (*HudProcessInput)(BaseClient*, bool bActive); /* 12 */
 } VT_BaseClient;
 
 struct BaseClient {
     VT_BaseClient* vt;
 };
 
+/* TODO: GetScreenSize */
 typedef struct {
     PAD(4 * 12);
-    int (*GetLocalPlayer)(EngineClient* thisptr);
+    int (*GetLocalPlayer)(EngineClient*); /* 12 */
     PAD(4 * 6);
-    void (*GetViewAngles)(EngineClient* thisptr, vec3_t* v);
-    void (*SetViewAngles)(EngineClient* thisptr, vec3_t* v);
+    void (*GetViewAngles)(EngineClient*, vec3_t* v); /* 19 */
+    void (*SetViewAngles)(EngineClient*, vec3_t* v); /* 20 */
 } VT_EngineClient;
 
 struct EngineClient {
@@ -176,11 +180,11 @@ struct EngineClient {
 
 typedef struct {
     PAD(4 * 3);
-    Entity* (*GetEntity)(EntityList* thisptr, int id);
+    Entity* (*GetEntity)(EntityList*, int id); /* 3 */
 
     /* REVIEW */
     PAD(4 * 4);
-    int (*HighestEntityIdx)(EntityList* thisptr);
+    int (*HighestEntityIdx)(EntityList*); /* 8 */
 } VT_EntityList;
 
 struct EntityList {
@@ -189,7 +193,7 @@ struct EntityList {
 
 typedef struct {
     PAD(4 * 14);
-    void (*Paint)(EngineVGui* thisptr, int mode);
+    void (*Paint)(EngineVGui*, int mode); /* 14 */
 } VT_EngineVGui;
 
 struct EngineVGui {
@@ -212,8 +216,7 @@ struct MatSurface {
 
 typedef struct {
     PAD(4 * 22);
-    bool (*CreateMove)(ClientModeBms* thisptr, float flInputSampleTime,
-                       usercmd_t* cmd);
+    bool (*CreateMove)(ClientModeBms*, float flInputSampleTime, usercmd_t* cmd);
 } VT_ClientModeBms;
 
 struct ClientModeBms {
