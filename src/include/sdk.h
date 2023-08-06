@@ -165,9 +165,10 @@ struct BaseClient {
     VT_BaseClient* vt;
 };
 
-/* TODO: GetScreenSize */
 typedef struct {
-    PAD(4 * 12);
+    PAD(4 * 5);
+    void (*GetScreenSize)(EngineClient*, int* w, int* h); /* 5 */
+    PAD(4 * 6);
     int (*GetLocalPlayer)(EngineClient*); /* 12 */
     PAD(4 * 6);
     void (*GetViewAngles)(EngineClient*, vec3_t* v); /* 19 */
