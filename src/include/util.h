@@ -2,6 +2,7 @@
 #define UTIL_H_
 
 #include <stdbool.h>
+#include <stddef.h>
 #include <math.h>
 #include "sdk.h"
 
@@ -32,6 +33,9 @@ typedef struct {
 
 /*----------------------------------------------------------------------------*/
 
+#define is_localplayer(ent) \
+    METHOD(localplayer, GetIndex) == METHOD(ent, GetIndex)
+
 void* get_interface(void* handle, const char* name);
 size_t vmt_size(void* vmt);
 
@@ -44,6 +48,8 @@ void vec_clamp(vec3_t v);
 void vec_norm(vec3_t v);
 vec3_t vec_to_ang(vec3_t v);
 float angle_delta_rad(float a, float b);
+
+bool world_to_screen(vec3_t vec, vec2_t* screen);
 
 bool protect_addr(void* ptr, int new_flags);
 
