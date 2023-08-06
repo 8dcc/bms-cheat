@@ -7,6 +7,19 @@
 
 #+TOC: headlines 2
 
+* Description
+This cheat currently has only bhop, legit autostrafe, rage autostrafe and box
+esp because, although I really liked reverse engineering this game, the
+multiplayer is so dead it's not fun to continue right now.
+
+When making this cheat, I invested most of my time in IDA, and I learned a lot
+about reverse engineering because I had no cheat base, no SDK, or no other
+project I could look at (I don't even think there are public sources for BMS
+cheats, let alone in C and for linux).
+
+In the process of making this cheat I made a small article about reverse
+engineering, and if you are interested you can check it out [[https://github.com/8dcc/bms-cheat/wiki/Hooking-CreateMove][here]].
+
 * Building
 
 #+begin_src console
