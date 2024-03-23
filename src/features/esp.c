@@ -2,6 +2,7 @@
 #include "features.h"
 #include "../include/sdk.h"
 #include "../include/util.h"
+#include "../include/math.h"
 #include "../include/globals.h"
 
 #define OUTLINED_BOX(x0, y0, x1, y1, c, oc)                           \
@@ -11,51 +12,94 @@
     METHOD_ARGS(i_surface, SetColor, c.r, c.g, c.b, c.a);             \
     METHOD_ARGS(i_surface, DrawRect, x0, y0, x1, y1);
 
-static bool draw2dbox(vec3_t o, int bh) {
-    /* bh: 3d box height (game units) */
-
-    static const rgba_t col     = { 240, 10, 10, 255 }; /* Color */
-    static const rgba_t out_col = { 0, 0, 0, 255 };     /* Outline */
-
-    if (vec_is_zero(o))
+static bool get_bbox(Entity* ent, int* x, int* y, int* w, int* h) {
+    Collideable* collideable = METHOD(ent, GetCollideable);
+    if (!collideable)
         return false;
 
-    /* Get top and bottom of player from origin with box height */
-    const vec3_t bot = { o.x, o.y, o.z };
-    const vec3_t top = { o.x, o.y, o.z + bh };
+    vec3_t obb_mins = *METHOD(collideable, ObbMins);
+    vec3_t obb_maxs = *METHOD(collideable, ObbMaxs);
 
-    vec2_t s_bot, s_top;
-    if (!world_to_screen(bot, &s_bot) || !world_to_screen(top, &s_top))
+    matrix3x4_t* trans = METHOD(ent, RenderableToWorldTransform);
+    if (!trans)
         return false;
 
-    const int h = s_bot.y - s_top.y;
-    const int w = bh == 70 ? h * 0.40f : h * 0.75f;
+    vec3_t points[] = { { obb_mins.x, obb_mins.y, obb_mins.z },
+                        { obb_mins.x, obb_maxs.y, obb_mins.z },
+                        { obb_maxs.x, obb_maxs.y, obb_mins.z },
+                        { obb_maxs.x, obb_mins.y, obb_mins.z },
+                        { obb_maxs.x, obb_maxs.y, obb_maxs.z },
+                        { obb_mins.x, obb_maxs.y, obb_maxs.z },
+                        { obb_mins.x, obb_mins.y, obb_maxs.z },
+                        { obb_maxs.x, obb_mins.y, obb_maxs.z } };
 
-    const int x0 = s_top.x - w / 2;
-    const int y0 = s_top.y;
-    const int x1 = x0 + w;
-    const int y1 = y0 + h;
+    for (int i = 0; i < 8; i++) {
+        vec3_t t;
+        vec_transform(points[i], trans, &t);
 
-    OUTLINED_BOX(x0, y0, x1, y1, col, out_col);
+        vec2_t s;
+        if (!world_to_screen(t, &s))
+            return false;
+
+        points[i].x = s.x;
+        points[i].y = s.y;
+    }
+
+    float left   = points[0].x;
+    float bottom = points[0].y;
+    float right  = points[0].x;
+    float top    = points[0].y;
+
+    for (int i = 0; i < 8; i++) {
+        if (left > points[i].x)
+            left = points[i].x;
+        if (bottom < points[i].y)
+            bottom = points[i].y;
+        if (right < points[i].x)
+            right = points[i].x;
+        if (top > points[i].y)
+            top = points[i].y;
+    }
+
+    *x = (int)(left);
+    *y = (int)(top);
+    *w = (int)(right - left);
+    *h = (int)(bottom - top);
 
     return true;
 }
 
 void esp(void) {
     /* TODO: Setting */
-    if (!localplayer)
+    if (!localplayer || !METHOD(i_engine, IsInGame))
         return;
 
-    /* Iterate all entities */
-    for (int i = 1; i <= 32; i++) {
-        Entity* ent = METHOD_ARGS(i_entitylist, GetEntity, i);
+    /* Iterate entities */
+    for (int i = 1; i <= METHOD(i_entitylist, HighestEntityIdx); i++) {
+        Entity* ent      = METHOD_ARGS(i_entitylist, GetEntity, i);
+        Networkable* net = GetNetworkable(ent);
 
-        /* TODO: Dormant check */
-        if (!ent || !METHOD(ent, IsAlive) || is_localplayer(ent))
+        if (!ent || METHOD(net, IsDormant) || !METHOD(ent, IsAlive) ||
+            is_localplayer(ent))
             continue;
 
-        if (!draw2dbox(*METHOD(ent, GetAbsOrigin), 70))
+        const rgba_t out_col = { 0, 0, 0, 255 }; /* Outline color */
+
+        rgba_t col; /* Box color */
+        if (METHOD(ent, IsPlayer))
+            col = (rgba_t){ 240, 10, 10, 255 };
+        else if (METHOD(ent, IsNPC))
+            col = (rgba_t){ 10, 10, 200, 255 };
+        else if (METHOD(ent, IsWeapon))
+            col = (rgba_t){ 10, 240, 10, 255 };
+        else
             continue;
+
+        int x, y, w, h;
+        if (!get_bbox(ent, &x, &y, &w, &h))
+            continue;
+
+        OUTLINED_BOX(x, y, x + w, y + h, col, out_col);
 
         /* TODO: Name esp, etc. */
     }
