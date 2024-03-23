@@ -3,6 +3,7 @@
 #include "features.h"
 #include "../include/globals.h"
 #include "../include/util.h"
+#include "../include/math.h"
 #include "../include/sdk.h"
 
 #define LEGIT_AUTOSTRAFE
