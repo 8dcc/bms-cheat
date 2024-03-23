@@ -13,33 +13,13 @@ DECL_HOOK(Paint);
 /*----------------------------------------------------------------------------*/
 
 bool hooks_init(void) {
-    HOOK(i_clientmodebms->vt, CreateMove);
-    HOOK(i_enginevgui->vt, Paint);
+    HOOK(i_clientmodebms, CreateMove);
+    HOOK(i_enginevgui, Paint);
 
     return true;
 }
 
 /*----------------------------------------------------------------------------*/
-
-static void print_ent_info(Entity* ent) {
-    if (!ent)
-        return;
-
-    const int idx     = METHOD(ent, GetIndex);
-    const int health  = METHOD(ent, GetHealth);
-    const int team    = METHOD(ent, GetTeamNumber);
-    const bool alive  = METHOD(ent, IsAlive);
-    const bool player = METHOD(ent, IsPlayer);
-    const int flags   = ent->flags;
-
-    const float ox = METHOD(ent, GetAbsOrigin)->x;
-    const float oy = METHOD(ent, GetAbsOrigin)->y;
-    const float oz = METHOD(ent, GetAbsOrigin)->z;
-
-    printf("[%d] %p | health: %3d | team: %d | alive: %d | player: %d | flags: "
-           "%d | origin:  %f, %f, %f\n",
-           idx, ent, health, team, alive, player, flags, ox, oy, oz);
-}
 
 bool h_CreateMove(ClientModeBms* thisptr, float flInputSampleTime,
                   usercmd_t* cmd) {
@@ -51,7 +31,6 @@ bool h_CreateMove(ClientModeBms* thisptr, float flInputSampleTime,
     if (!localplayer)
         return ret;
 
-    /* print_ent_info(localplayer); */
     bhop(cmd);
 
     return ret;

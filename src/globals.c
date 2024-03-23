@@ -19,7 +19,7 @@
 
 #define GET_INTERFACE(TYPE, VAR, HANDLER, STR)                   \
     VAR = (TYPE)get_interface(HANDLER, STR);                     \
-    if (!VAR || !VAR->vt) {                                      \
+    if (!VAR || !VAR->vmt) {                                      \
         fprintf(stderr, "globals_init: cant't load " #VAR "\n"); \
         return false;                                            \
     }
@@ -46,7 +46,7 @@ static inline ClientModeBms* get_clientmodebms(void) {
      * For more info, see: https://github.com/8dcc/bms-cheat/wiki */
     const int byte_offset = 1;
 
-    void* func_ptr      = i_baseclient->vt->HudProcessInput;
+    void* func_ptr      = i_baseclient->vmt->HudProcessInput;
     void* g_pClientMode = *(void**)(func_ptr + byte_offset); /* E0 08 BB 00 */
     ClientModeBms* edx  = *(ClientModeBms**)g_pClientMode;
 
@@ -68,7 +68,7 @@ bool globals_init(void) {
 
     /* Other interfaces */
     i_clientmodebms = get_clientmodebms();
-    if (!i_clientmodebms || !i_clientmodebms->vt) {
+    if (!i_clientmodebms || !i_clientmodebms->vmt) {
         fprintf(stderr, "globals_init: couldn't load i_clientmodebms\n");
         return false;
     }

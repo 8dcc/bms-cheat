@@ -12,13 +12,13 @@
     extern name##_t ho_##name;             \
     type h_##name(__VA_ARGS__);
 
-#define DECL_HOOK(name) name##_t ho_##name = NULL;
+#define DECL_HOOK(NAME) NAME##_t ho_##NAME = NULL;
 
-#define HOOK(interface, name)          \
-    ho_##name       = interface->name; \
-    interface->name = h_##name;
+#define HOOK(INTERFACE, NAME)          \
+    ho_##NAME       = INTERFACE->vmt->NAME; \
+    INTERFACE->vmt->NAME = h_##NAME;
 
-#define ORIGINAL(name, ...) ho_##name(__VA_ARGS__);
+#define ORIGINAL(NAME, ...) ho_##NAME(__VA_ARGS__);
 
 /*----------------------------------------------------------------------------*/
 

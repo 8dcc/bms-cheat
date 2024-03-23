@@ -11,39 +11,37 @@
  * -------+-------------------------------
  * h_*    | handler ptr (global scope)
  * i_*    | interface ptr (global scope)
- * oVTi_* | original vtable pointer (will be replaced with our own vtable)
- * nVTi_* | new vtable pointer allocated by us
+ * oVMTi_* | original vmt pointer (will be replaced with our own vtable)
+ * nVMTi_* | new vtable pointer allocated by us
  */
-#define DECL_INTF(type, name)      \
-    type* i_##name         = NULL; \
-    VT_##type* oVTi_##name = NULL; \
-    VT_##type* nVTi_##name = NULL;
+#define DECL_INTF(type, name)        \
+    type* i_##name           = NULL; \
+    VMT_##type* oVMTi_##name = NULL; \
+    VMT_##type* nVMTi_##name = NULL;
 
 #define DECL_INTF_EXTERN(type, name) \
     extern type* i_##name;           \
-    extern VT_##type* oVTi_##name;   \
-    extern VT_##type* nVTi_##name;
+    extern VMT_##type* oVMTi_##name; \
+    extern VMT_##type* nVMTi_##name;
 
 /*
  * Allocates a new vtable for the specified class, fills it with the original
  * and replaces it in the class.
- * Credits for ending my problem for the last 2 days:
- * https://github.com/deboogerxyz/ah4/blob/93e135135716e4d840547eea3c1ad922714ef9b7/hooks.c#L23
  */
 #define CLONE_VTABLE(class, name)                                           \
-    oVT##name = name->vt;                                                   \
-    nVT##name = malloc(vmt_size(name->vt));                                 \
-    if (!nVT##name) {                                                       \
+    oVMT##name = name->vmt;                                                 \
+    nVMT##name = malloc(vmt_size(name->vmt));                               \
+    if (!nVMT##name) {                                                      \
         fprintf(stderr, "CLONE_VTABLE: Could not allocate vtable for %s\n", \
                 #name);                                                     \
         return false;                                                       \
     }                                                                       \
-    memcpy(nVT##name, name->vt, vmt_size(name->vt));                        \
-    name->vt = nVT##name;
+    memcpy(nVMT##name, name->vmt, vmt_size(name->vmt));                     \
+    name->vmt = nVMT##name;
 
 #define RESTORE_VTABLE(class, name) \
-    name->vt = oVT##name;           \
-    free(nVT##name);
+    name->vmt = oVMT##name;         \
+    free(nVMT##name);
 
 /*----------------------------------------------------------------------------*/
 /* Global variables */
