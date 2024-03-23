@@ -23,6 +23,10 @@ typedef struct {
     float m[4][4];
 } VMatrix;
 
+typedef struct {
+    float m[3][4];
+} matrix3x4_t;
+
 enum in_buttons {
     IN_ATTACK    = (1 << 0),
     IN_JUMP      = (1 << 1),
@@ -107,18 +111,64 @@ typedef struct {
 /*----------------------------------------------------------------------------*/
 /* Other classes */
 
-#define METHOD(instance, method) instance->vt->method(instance)
-#define METHOD_ARGS(instance, method, ...) \
-    instance->vt->method(instance, __VA_ARGS__)
+#define METHOD(INSTANCE, METHOD) INSTANCE->vmt->METHOD(INSTANCE)
+#define METHOD_ARGS(INSTANCE, METHOD, ...) \
+    INSTANCE->vmt->METHOD(INSTANCE, __VA_ARGS__)
 
+typedef struct Renderable Renderable;
+typedef struct Collideable Collideable;
+typedef struct Networkable Networkable;
 typedef struct Entity Entity;
+
+typedef struct {
+    PAD(4 * 34);
+    /* FIXME */
+    matrix3x4_t* (*RenderableToWorldTransform)(Renderable*); /* 34 */
+} VMT_Renderable;
+
+struct Renderable {
+    VMT_Renderable* vmt;
+};
+
+typedef struct {
+    PAD(4 * 1);
+    vec3_t* (*ObbMinsPreScaled)(Collideable*); /* 1 */
+    vec3_t* (*ObbMaxsPreScaled)(Collideable*); /* 2 */
+    vec3_t* (*ObbMins)(Collideable*);          /* 3 */
+    vec3_t* (*ObbMaxs)(Collideable*);          /* 4 */
+} VMT_Collideable;
+
+struct Collideable {
+    VMT_Collideable* vmt;
+};
+
+typedef struct {
+    PAD(4 * 8);
+    bool (*IsDormant)(Networkable*); /* 8 */
+} VMT_Networkable;
+
+struct Networkable {
+    VMT_Networkable* vmt;
+};
+
+static inline Renderable* GetRenderable(Entity* ent) {
+    return (Renderable*)((uint32_t)ent + 0x4);
+}
+
+static inline Networkable* GetNetworkable(Entity* ent) {
+    return (Networkable*)((uint32_t)ent + 0x8);
+}
 
 /* TODO: Movetype */
 typedef struct {
-    PAD(4 * 11);
+    PAD(4 * 4);
+    Collideable* (*GetCollideable)(Entity*); /* 4 */
+    PAD(4 * 6);
     vec3_t* (*GetAbsOrigin)(Entity*); /* 11 */
     vec3_t* (*GetAbsAngles)(Entity*); /* 12, kinda broken */
-    PAD(4 * 71);
+    PAD(4 * 38);
+    matrix3x4_t* (*RenderableToWorldTransform)(Entity*); /* 51 */
+    PAD(4 * 32);
     int (*GetIndex)(Entity*); /* 84 */
     PAD(4 * 36);
     int (*GetTeamNumber)(Entity*); /* 121 */
@@ -128,16 +178,16 @@ typedef struct {
     bool (*IsAlive)(Entity*); /* 197 */
     PAD(4 * 1);
     bool (*IsPlayer)(Entity*); /* 199 */
+    PAD(4 * 2);
+    bool (*IsNPC)(Entity*); /* 202 */
 
     /* REVIEW */
-    PAD(4 * 3);
-    bool (*IsNPC)(Entity*); /* 203 */
-    PAD(4 * 3);
+    PAD(4 * 4);
     bool (*IsWeapon)(Entity*); /* 207 */
-} VT_Entity;
+} VMT_Entity;
 
 struct Entity {
-    VT_Entity* vt;
+    VMT_Entity* vmt;
     PAD(0x84);
     int health; /* 0x88 */
     PAD(0x4);
@@ -163,10 +213,10 @@ typedef struct ClientModeBms ClientModeBms;
 typedef struct {
     PAD(4 * 12);
     void (*HudProcessInput)(BaseClient*, bool bActive); /* 12 */
-} VT_BaseClient;
+} VMT_BaseClient;
 
 struct BaseClient {
-    VT_BaseClient* vt;
+    VMT_BaseClient* vmt;
 };
 
 typedef struct {
@@ -177,35 +227,36 @@ typedef struct {
     PAD(4 * 6);
     void (*GetViewAngles)(EngineClient*, vec3_t* v); /* 19 */
     void (*SetViewAngles)(EngineClient*, vec3_t* v); /* 20 */
-    PAD(4 * 15);
+    int (*GetMaxClients)(EngineClient*);             /* 21 */
+    PAD(4 * 4);
+    bool (*IsInGame)(EngineClient*); /* 26 */
+    PAD(4 * 9);
     VMatrix* (*WorldToScreenMatrix)(EngineClient*); /* 36 */
-} VT_EngineClient;
+} VMT_EngineClient;
 
 struct EngineClient {
-    VT_EngineClient* vt;
+    VMT_EngineClient* vmt;
 };
 
 typedef struct {
     PAD(4 * 3);
     Entity* (*GetEntity)(EntityList*, int id); /* 3 */
-
-    /* REVIEW */
     PAD(4 * 4);
     int (*HighestEntityIdx)(EntityList*); /* 8 */
-} VT_EntityList;
+} VMT_EntityList;
 
 struct EntityList {
-    VT_EntityList* vt;
+    VMT_EntityList* vmt;
 };
 
 /* TODO: GetPanel */
 typedef struct {
     PAD(4 * 14);
     void (*Paint)(EngineVGui*, uint32_t mode); /* 14 */
-} VT_EngineVGui;
+} VMT_EngineVGui;
 
 struct EngineVGui {
-    VT_EngineVGui* vt;
+    VMT_EngineVGui* vmt;
 };
 
 typedef struct {
@@ -216,19 +267,19 @@ typedef struct {
     PAD(4 * 1);
     void (*DrawRect)(MatSurface*, int x0, int y0, int x1, int y1); /* 17 */
     void (*DrawLine)(MatSurface*, int x0, int y0, int x1, int y1); /* 18 */
-} VT_MatSurface;
+} VMT_MatSurface;
 
 struct MatSurface {
-    VT_MatSurface* vt;
+    VMT_MatSurface* vmt;
 };
 
 typedef struct {
     PAD(4 * 22);
     bool (*CreateMove)(ClientModeBms*, float flInputSampleTime, usercmd_t* cmd);
-} VT_ClientModeBms;
+} VMT_ClientModeBms;
 
 struct ClientModeBms {
-    VT_ClientModeBms* vt;
+    VMT_ClientModeBms* vmt;
 };
 
 #endif /* SDK_H_ */

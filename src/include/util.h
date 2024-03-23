@@ -29,7 +29,7 @@ typedef struct {
 /*----------------------------------------------------------------------------*/
 
 #define is_localplayer(ent) \
-    (METHOD(localplayer, GetIndex) == METHOD(ent, GetIndex))
+    (METHOD(i_engine, GetLocalPlayer) == METHOD(ent, GetIndex))
 
 void* get_interface(void* handle, const char* name);
 size_t vmt_size(void* vmt);
